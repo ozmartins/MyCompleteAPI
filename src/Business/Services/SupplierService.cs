@@ -38,10 +38,10 @@ namespace Hard.Business.Services
                 Notify("This supplier has associated products.");
                 return;
             }
-          
-            var addressId = _supplierRepository.RecoverWithAddress(id).Result.Address.Id;
 
-            await _addressRepository.Delete(addressId);
+            var address = _supplierRepository.RecoverWithAddress(id).Result.Address;
+
+            if (address != null) await _addressRepository.Delete(address.Id);                        
 
             await _supplierRepository.Delete(id);
         }
