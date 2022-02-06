@@ -11,45 +11,44 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class SupplierController : ControllerBase
+    public class SupplierController : MainController
     {
         private readonly ISupplierRepository _supplierRepository;
+
+        private readonly IAddressRepository _addressRepository;
 
         private readonly IMapper _mapper;
 
         private readonly ISupplierService _supplierService;
 
-        public SupplierController(ISupplierRepository supplierRepository, IMapper mapper, ISupplierService supplierService)
+        public SupplierController(ISupplierRepository supplierRepository, IAddressRepository addressRepository, IMapper mapper, ISupplierService supplierService, INotifier notifier) : base(notifier)
         {
             _supplierRepository = supplierRepository;
+            _addressRepository = addressRepository;
             _mapper = mapper;
             _supplierService = supplierService;
-        }
+        }        
 
         [HttpPost]
         public async Task<ActionResult<SupplierViewModel>> Post(SupplierViewModel supplierViewModel)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            if (!ModelState.IsValid) return CustomResponse(ModelState);           
 
-            var supplier = _mapper.Map<Supplier>(supplierViewModel);
+            await _supplierService.Create(_mapper.Map<Supplier>(supplierViewModel));
 
-            await _supplierService.Create(supplier);
-
-            return Ok(supplierViewModel);
+            return CustomResponse(supplierViewModel);
         }
 
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<SupplierViewModel>> Put(Guid id, SupplierViewModel supplierViewModel)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            if (id != supplierViewModel.Id) return BadRequest("id != model.Id");
 
-            if (id != supplierViewModel.Id) return BadRequest();
+            if (!ModelState.IsValid) return CustomResponse(ModelState);                        
 
-            var supplier = _mapper.Map<Supplier>(supplierViewModel);
+            await _supplierService.Update(_mapper.Map<Supplier>(supplierViewModel));
 
-            await _supplierService.Update(supplier);
-
-            return Ok(supplierViewModel);
+            return CustomResponse(supplierViewModel);
         }
 
         [HttpDelete("{id:guid}")]
@@ -59,21 +58,17 @@ namespace API.Controllers
 
             if (supplier == null) return NotFound();
 
-            await _supplierService.Delete(id);
+            await _supplierService.Delete(id);            
 
-            var supplierViewModel = _mapper.Map<SupplierViewModel>(supplier);
-
-            return Ok();
+            return CustomResponse(_mapper.Map<SupplierViewModel>(supplier));
         }
 
         [HttpGet]
         public async Task<IEnumerable<SupplierViewModel>> Get()
         {
-            var supplierList = await _supplierRepository.RecoverAll();
+            var supplierList = await _supplierRepository.RecoverAll();          
 
-            var supplierViewModelList = _mapper.Map<IEnumerable<SupplierViewModel>>(supplierList);
-
-            return supplierViewModelList;
+            return _mapper.Map<IEnumerable<SupplierViewModel>>(supplierList);
         }
 
         [HttpGet("{id:guid}")]
@@ -81,11 +76,31 @@ namespace API.Controllers
         {
             var supplier = await _supplierRepository.RecoverWithAddressAndProducts(id);
 
-            if (supplier == null) return NotFound();
+            if (supplier == null) return NotFound();            
 
-            var supplierViewModel = _mapper.Map<SupplierViewModel>(supplier);
+            return _mapper.Map<SupplierViewModel>(supplier);
+        }
 
-            return supplierViewModel;
+        [HttpGet("address/{id:guid}")]
+        public async Task<ActionResult<AddressViewModel>> GetAddress(Guid id)
+        {
+            var address = await _addressRepository.Recover(id);
+
+            if (address == null) return NotFound();
+
+            return _mapper.Map<AddressViewModel>(address);
+        }
+
+        [HttpPut("address/{id:guid}")]
+        public async Task<ActionResult<SupplierViewModel>> PutAddress(Guid id, AddressViewModel addressViewModel)
+        {
+            if (id != addressViewModel.Id) return BadRequest("id != model.Id");
+
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            await _supplierService.UpdateAddress(_mapper.Map<Address>(addressViewModel));
+
+            return CustomResponse(addressViewModel);
         }
     }
 }

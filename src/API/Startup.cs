@@ -2,6 +2,7 @@ using API.Configuration;
 using Hard.Data.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +26,7 @@ namespace API
             services.AddDbContext<HardDbContext>(options => { options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")); });
             services.AddCors();
             services.AddControllers();
+            services.Configure<ApiBehaviorOptions>(o => { o.SuppressModelStateInvalidFilter = true; });
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" }); });
             services.AddAutoMapper(typeof(Startup));
             services.ResolveDependencies();            
