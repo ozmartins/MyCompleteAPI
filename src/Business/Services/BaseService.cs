@@ -3,9 +3,6 @@ using FluentValidation.Results;
 using Hard.Business.Interfaces;
 using Hard.Business.Models;
 using Hard.Business.Notifications;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Hard.Business.Services
 {
