@@ -11,6 +11,7 @@ namespace API.Configuration
             CreateMap<Supplier, SupplierViewModel>().ReverseMap();
             CreateMap<Address, AddressViewModel>().ReverseMap();
             CreateMap<Product, ProductViewModel>().ReverseMap();
+           
         }
     }
 }

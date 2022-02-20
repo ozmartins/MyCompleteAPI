@@ -34,7 +34,7 @@ namespace Hard.Business.Services
 
         public async Task Update(Product product)
         {
-            if (!ExecuteValidation(new ProductValidator(), product) || !ExecuteValidation(new ProductValidator(), product)) ;
+            if (!ExecuteValidation(new ProductValidator(), product) || !ExecuteValidation(new ProductValidator(), product)) return;
             
             await _productRepository.Update(product);
         }
