@@ -1,7 +1,9 @@
-﻿using API.ViewModels;
+﻿using API.Extensions;
+using API.ViewModels;
 using AutoMapper;
 using Hard.Business.Interfaces;
 using Hard.Business.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,21 +12,25 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ProductController : MainController
     {
+        ISupplierRepository _supplierRepository;
         IProductRepository _productRepository;
         IProductService _productService;
         IMapper _mapper;
 
-        public ProductController(IProductRepository productRepository, IProductService productService, IMapper mapper, INotifier notifier) : base(notifier)
+        public ProductController(ISupplierRepository supplierRepository, IProductRepository productRepository, IProductService productService, IMapper mapper, INotifier notifier) : base(notifier)
         {
+            _supplierRepository = supplierRepository;
             _productRepository = productRepository;
             _productService = productService;
             _mapper = mapper;
         }
 
+        [ClaimsAuthorize("product", "create")]
         [HttpPost]
         public async Task<ActionResult<ProductViewModel>> Post(ProductViewModel productViewModel)
         {
@@ -32,13 +38,18 @@ namespace API.Controllers
 
             productViewModel.Image = Guid.NewGuid().ToString();
 
-            UpdateFile(productViewModel.Image, productViewModel.ImageUpload);
-           
-            await _productService.Create(_mapper.Map<Product>(productViewModel));
+            //UpdateFile(productViewModel.ImageUpload, productViewModel.Image);
+
+            var product = _mapper.Map<Product>(productViewModel);
+
+            product.Supplier = await _supplierRepository.Recover(productViewModel.SupplierId);
+
+            await _productService.Create(product);
 
             return CustomResponse(productViewModel);
         }
 
+        [ClaimsAuthorize("product", "update")]
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<ProductViewModel>> Put(Guid id, ProductViewModel productViewModel)
         {
@@ -51,24 +62,23 @@ namespace API.Controllers
             return CustomResponse(productViewModel);
         }
 
+        [ClaimsAuthorize("product", "delete")]
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult<ProductViewModel>> Delete(Guid id)
-        {
-            var product = _productRepository.Recover(id);
-
-            if (product == null) return NotFound();
-
+        {           
             await _productService.Delete(id);
 
-            return CustomResponse(product);
+            return CustomResponse();
         }
 
+        [ClaimsAuthorize("product", "recover")]
         [HttpGet]
         public async Task<IEnumerable<ProductViewModel>> Get()
         {
             return _mapper.Map<IEnumerable<ProductViewModel>>(await _productRepository.RecoverAll());
         }
-        
+
+        [ClaimsAuthorize("product", "recover")]
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<ProductViewModel>> Get(Guid id)
         {

@@ -5,8 +5,8 @@ using System.Linq;
 namespace Hard.Data.Context
 {
     public class HardDbContext : DbContext
-    {
-        public HardDbContext(DbContextOptions options) : base(options)
+    {        
+        public HardDbContext(DbContextOptions<HardDbContext> options) : base(options)
         {            
         }
 

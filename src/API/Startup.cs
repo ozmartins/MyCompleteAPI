@@ -1,4 +1,5 @@
 using API.Configuration;
+using API.Extensions;
 using Hard.Data.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,20 +20,20 @@ namespace API
         }
 
         public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
+        
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<HardDbContext>(options => { options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")); });
             services.AddCors();
             services.AddControllers();
-            services.Configure<ApiBehaviorOptions>(o => { o.SuppressModelStateInvalidFilter = true; });
-            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" }); });
+            services.Configure<ApiBehaviorOptions>(o => { o.SuppressModelStateInvalidFilter = true; });            
             services.AddAutoMapper(typeof(Startup));
-            services.ResolveDependencies();            
+            services.ResolveDependencies();
+            services.AddIdentityConfiguration(Configuration);
+            services.AddJwtConfiguration(Configuration);
+            services.AddSwagger();
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -40,7 +41,7 @@ namespace API
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
-            }
+            }            
 
             app.UseHttpsRedirection();
 
@@ -51,9 +52,9 @@ namespace API
                 .AllowAnyMethod()
                 .AllowAnyHeader());
 
-            app.UseAuthorization();
+            app.UseAuthentication();
 
-            app.UseAuthorization();
+            app.UseAuthorization();                      
 
             app.UseEndpoints(endpoints =>
             {

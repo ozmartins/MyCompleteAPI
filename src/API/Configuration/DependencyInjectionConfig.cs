@@ -1,4 +1,6 @@
-﻿using Hard.Business.Interfaces;
+﻿using API.Extensions;
+using Business.Interfaces;
+using Hard.Business.Interfaces;
 using Hard.Business.Notifications;
 using Hard.Business.Services;
 using Hard.Data.Context;
@@ -20,7 +22,9 @@ namespace API.Configuration
             services.AddScoped<ISupplierService, SupplierService>();
             services.AddScoped<IProductService, ProductService>();
 
-            services.AddScoped<INotifier, Notifier>();            
+            services.AddScoped<INotifier, Notifier>();
+
+            services.AddScoped<IUser, AspNetUser>();
 
             return services;
         }

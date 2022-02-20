@@ -32,6 +32,6 @@ namespace API.ViewModels
         public Guid SupplierId { get; set; }
         
         [ScaffoldColumn(false)]
-        public Guid SupplierName { get; set; }
+        public String SupplierName { get; set; }
     }
 }

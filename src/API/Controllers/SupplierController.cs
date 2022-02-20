@@ -1,7 +1,9 @@
-﻿using API.ViewModels;
+﻿using API.Extensions;
+using API.ViewModels;
 using AutoMapper;
 using Hard.Business.Interfaces;
 using Hard.Business.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class SupplierController : MainController
@@ -27,8 +30,9 @@ namespace API.Controllers
             _addressRepository = addressRepository;
             _mapper = mapper;
             _supplierService = supplierService;
-        }        
-
+        }
+        
+        [ClaimsAuthorize("supplier", "create")]
         [HttpPost]
         public async Task<ActionResult<SupplierViewModel>> Post(SupplierViewModel supplierViewModel)
         {
@@ -39,6 +43,7 @@ namespace API.Controllers
             return CustomResponse(supplierViewModel);
         }
 
+        [ClaimsAuthorize("supplier", "update")]
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<SupplierViewModel>> Put(Guid id, SupplierViewModel supplierViewModel)
         {
@@ -51,6 +56,7 @@ namespace API.Controllers
             return CustomResponse(supplierViewModel);
         }
 
+        [ClaimsAuthorize("supplier", "delete")]
         [HttpDelete("{id:guid}")]
         public async Task<ActionResult<SupplierViewModel>> Delete(Guid id)
         {
@@ -63,6 +69,7 @@ namespace API.Controllers
             return CustomResponse(_mapper.Map<SupplierViewModel>(supplier));
         }
 
+        [ClaimsAuthorize("supplier", "recover")]
         [HttpGet]
         public async Task<IEnumerable<SupplierViewModel>> Get()
         {
@@ -71,6 +78,7 @@ namespace API.Controllers
             return _mapper.Map<IEnumerable<SupplierViewModel>>(supplierList);
         }
 
+        [ClaimsAuthorize("supplier", "recover")]
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<SupplierViewModel>> Get(Guid id)
         {
@@ -81,6 +89,7 @@ namespace API.Controllers
             return _mapper.Map<SupplierViewModel>(supplier);
         }
 
+        [ClaimsAuthorize("supplier", "recover")]
         [HttpGet("address/{id:guid}")]
         public async Task<ActionResult<AddressViewModel>> GetAddress(Guid id)
         {
@@ -91,6 +100,7 @@ namespace API.Controllers
             return _mapper.Map<AddressViewModel>(address);
         }
 
+        [ClaimsAuthorize("supplier", "update")]
         [HttpPut("address/{id:guid}")]
         public async Task<ActionResult<SupplierViewModel>> PutAddress(Guid id, AddressViewModel addressViewModel)
         {
