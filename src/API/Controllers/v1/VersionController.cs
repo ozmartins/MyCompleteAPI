@@ -1,5 +1,7 @@
 ﻿using Hard.Business.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace API.Controllers.v1
 {
@@ -8,13 +10,17 @@ namespace API.Controllers.v1
     [Route("api/v{version:apiVersion}/[controller]")]
     public class VersionController : MainController
     {
-        public VersionController(INotifier notifier) : base(notifier)
+        private readonly ILogger<VersionController> _logger;
+
+        public VersionController(INotifier notifier, ILogger<VersionController> logger) : base(notifier)
         {
+            _logger = logger;
         }
 
         [HttpGet]
         public string Get()
         {
+            _logger.LogInformation("GerVersion successfully executed");            
             return "Version=1.0";
         }
     }

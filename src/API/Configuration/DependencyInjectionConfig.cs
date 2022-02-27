@@ -6,8 +6,6 @@ using Hard.Business.Services;
 using Hard.Data.Context;
 using Hard.Data.Repository;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace API.Configuration
 {
