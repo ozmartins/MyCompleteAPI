@@ -28,7 +28,7 @@ namespace API.Configuration
 
             services.AddScoped<IUser, AspNetUser>();
 
-            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+            //services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
             return services;
         }
