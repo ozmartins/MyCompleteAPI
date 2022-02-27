@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Linq;
 using System.Security.Claims;
 
 namespace API.Extensions
-{    
+{
     public class ClaimsAuthorizeAttribute : TypeFilterAttribute
     {
         public ClaimsAuthorizeAttribute(string claimName, string claimValue) : base(typeof(RequirementsClaimFilter))
