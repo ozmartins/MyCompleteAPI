@@ -44,9 +44,10 @@ namespace API
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();                
-                app.UseSwaggerConfig(provider);
+                app.UseDeveloperExceptionPage();                                
             }
+
+            app.UseSwaggerConfig(provider);
 
             app.UseElmahIo();
 
