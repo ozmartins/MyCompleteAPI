@@ -6,6 +6,8 @@ using Hard.Business.Services;
 using Hard.Data.Context;
 using Hard.Data.Repository;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace API.Configuration
 {
@@ -26,7 +28,7 @@ namespace API.Configuration
 
             services.AddScoped<IUser, AspNetUser>();
 
-            //services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
             return services;
         }

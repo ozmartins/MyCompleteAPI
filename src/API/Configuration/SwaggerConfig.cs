@@ -16,15 +16,15 @@ namespace API.Configuration
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "MyComplereAPI", Version = "v1" });
+                c.OperationFilter<SwaggerDefaultValues>();
+                
                 c.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.Http,
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
                     Scheme = "bearer"
-                });
-                c.OperationFilter<AuthenticationRequirementsOperationFilter>();
+                });                
             });
 
             return services;            
